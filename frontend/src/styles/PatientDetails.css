@@ -1,0 +1,226 @@
+.patient-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background-color: var(--bg-secondary);
+  min-height: calc(100vh - 80px);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+}
+
+.page-header h1 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.prediction-banner {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  margin-top: 1rem;
+  border: 2px solid;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.prediction-banner.high {
+  background: var(--error-bg);
+  border-color: var(--error);
+}
+
+.prediction-banner.medium {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+}
+
+.prediction-banner.low {
+  background: var(--success-bg);
+  border-color: var(--success);
+}
+
+.prediction-banner h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.prediction-banner.high h3 { color: var(--error); }
+.prediction-banner.medium h3 { color: var(--warning); }
+.prediction-banner.low h3 { color: var(--success); }
+
+.prediction-banner p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.patient-details-grid {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.details-section {
+  background: var(--bg-primary);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.details-section:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.details-section h3 {
+  color: var(--text-primary);
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.details-section h3::before {
+  content: '';
+  width: 4px;
+  height: 1.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-radius: 2px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  margin-bottom: 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.info-item:hover {
+  background: var(--bg-hover);
+  transform: translateX(3px);
+}
+
+.info-item label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span, .info-item p {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.back-navigation {
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .patient-details-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .details-section {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .patient-details-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .header-actions .button {
+    width: 100%;
+  }
+  
+  .details-section {
+    padding: 1.5rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .patient-details-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .page-header {
+    padding: 1.25rem;
+  }
+  
+  .details-section h3 {
+    font-size: 1.25rem;
+  }
+  
+  .info-item {
+    padding: 0.875rem;
+  }
+}

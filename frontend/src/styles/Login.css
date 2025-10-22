@@ -1,0 +1,110 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #DDD6FE 100%);
+    padding: 2rem;
+}
+
+.login-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: 3rem 2.5rem;
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 460px;
+    border: 1px solid var(--border-light);
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.login-form .form-group {
+    margin-bottom: 1.75rem;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 0.625rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+}
+
+.login-button {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    margin-top: 0.5rem;
+}
+
+.login-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.login-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.login-button:disabled {
+    background: linear-gradient(135deg, var(--border-medium) 0%, var(--text-tertiary) 100%);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .login-container {
+        padding: 1rem;
+    }
+    
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-header h1 {
+        font-size: 1.625rem;
+    }
+}

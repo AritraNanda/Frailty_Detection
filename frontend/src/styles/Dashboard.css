@@ -1,0 +1,209 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 2rem;
+    background-color: var(--bg-secondary);
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.recent-patients {
+    margin-top: 1.5rem;
+}
+
+.patient-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+.patient-item {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-item:hover {
+    background-color: var(--bg-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+.no-patients {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-style: italic;
+    padding: 3rem 1rem;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--border-medium);
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    padding: 2rem 1.75rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+}
+
+.stat-card p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.dashboard-section {
+    background: var(--bg-primary);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.dashboard-section:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-light);
+}
+
+@media (max-width: 1200px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1.5rem 1rem;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .dashboard-section {
+        padding: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        padding: 1rem 0.75rem;
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+}

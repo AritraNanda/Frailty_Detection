@@ -1,0 +1,150 @@
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: none;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  height: 80px;
+}
+
+.header-left .logo {
+  text-decoration: none;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.header-left .logo:hover {
+  transform: translateY(-2px);
+}
+
+.header-left .logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: all 0.3s ease;
+  padding: 0.625rem 1.125rem;
+  border-radius: 8px;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.doctor-info {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  color: #667eea;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logout-button:hover {
+  background: #ffffff;
+  color: #764ba2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.logout-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 1024px) {
+  .header-content {
+    padding: 0 1.5rem;
+  }
+  
+  .header-nav {
+    gap: 0.25rem;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 1rem;
+    height: 70px;
+  }
+  
+  .header-left .logo h1 {
+    font-size: 1.25rem;
+  }
+  
+  .header-nav {
+    display: none;
+  }
+  
+  .header-right {
+    gap: 0.75rem;
+  }
+  
+  .doctor-info {
+    display: none;
+  }
+  
+  .logout-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}

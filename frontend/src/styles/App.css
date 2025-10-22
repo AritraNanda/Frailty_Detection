@@ -1,0 +1,192 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.main-content {
+  min-height: calc(100vh - 70px);
+  padding: 20px;
+}
+
+/* Button Styles */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button.primary {
+  background: #007bff;
+  color: white;
+}
+
+.button.primary:hover {
+  background: #0056b3;
+}
+
+.button.secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.button.secondary:hover {
+  background: #545b62;
+}
+
+.button.danger {
+  background: #dc3545;
+  color: white;
+}
+
+.button.danger:hover {
+  background: #c82333;
+}
+
+.button.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.button:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Form Styles */
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Utility Classes */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #6c757d;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  margin: 10px 0;
+}
+
+/* Risk Level Badges */
+.risk-badge, .risk-level {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.risk-badge.high, .risk-level.high {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.risk-badge.medium, .risk-level.medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.risk-badge.low, .risk-level.low {
+  background: #d4edda;
+  color: #155724;
+}
+
+.risk-badge.unknown, .risk-level.unknown {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px;
+  }
+  
+  .button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
