@@ -8,7 +8,7 @@
     "server": "cd Backend && npm run dev",
     "client": "cd frontend && npm start",
     "start": "cd Backend && npm start",
-    "build": "npm install && cd Backend && npm install && cd ../frontend && npm install && npm run build",
+    "build": "pip3 install -r requirements.txt && npm install && cd Backend && npm install && cd ../frontend && npm install && npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -16,13 +16,18 @@ warnings.filterwarnings('ignore')
 def load_model_artifacts():
     """Load the trained model, scaler, and metadata"""
     try:
-        with open('ml_models/model.pkl', 'rb') as f:
+        import os
+        # Get the directory where this script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        model_dir = os.path.join(script_dir, 'ml_models')
+        
+        with open(os.path.join(model_dir, 'model.pkl'), 'rb') as f:
             model = pickle.load(f)
         
-        with open('ml_models/scaler.pkl', 'rb') as f:
+        with open(os.path.join(model_dir, 'scaler.pkl'), 'rb') as f:
             scaler = pickle.load(f)
         
-        with open('ml_models/model_metadata.json', 'r') as f:
+        with open(os.path.join(model_dir, 'model_metadata.json'), 'r') as f:
             metadata = json.load(f)
         
         return model, scaler, metadata
