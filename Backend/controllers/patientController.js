@@ -173,7 +173,9 @@ exports.searchPatients = async (req, res, next) => {
       doctorId: req.doctor.id,
       $or: [
         { name: { $regex: q, $options: 'i' } },
-        { medicalHistory: { $regex: q, $options: 'i' } }
+        { patientId: { $regex: q, $options: 'i' } },
+        { email: { $regex: q, $options: 'i' } },
+        { phone: { $regex: q, $options: 'i' } }
       ]
     }).sort({ createdAt: -1 });
 

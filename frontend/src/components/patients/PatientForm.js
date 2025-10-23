@@ -46,8 +46,38 @@ const PatientForm = () => {
     try {
       setLoading(true);
       const response = await patientService.getPatient(id);
-      setFormData(response.data);
+      console.log('Fetch patient response:', response);
+      
+      // Handle response format (backend returns {success, data})
+      const patientData = response.data?.data || response.data;
+      console.log('Patient data for form:', patientData);
+      
+      // Set form data with existing patient data
+      setFormData({
+        patientId: patientData.patientId || '',
+        name: patientData.name || '',
+        email: patientData.email || '',
+        phone: patientData.phone || '',
+        age: patientData.age || '',
+        gender: patientData.gender || '',
+        livingStatus: patientData.livingStatus || '',
+        depression: patientData.depression || '',
+        cardiacFunction: patientData.cardiacFunction || '',
+        cerebrovascularDisease: patientData.cerebrovascularDisease || '',
+        diabetes: patientData.diabetes || '',
+        totalCholesterol: patientData.totalCholesterol || '',
+        ldlCholesterol: patientData.ldlCholesterol || '',
+        hemoglobin: patientData.hemoglobin || '',
+        adlScore: patientData.adlScore || '',
+        notes: patientData.notes || ''
+      });
+      
+      // If patient has frailty prediction, show it
+      if (patientData.frailtyPrediction) {
+        setPrediction(patientData.frailtyPrediction);
+      }
     } catch (error) {
+      console.error('Error fetching patient:', error);
       setError('Error fetching patient data');
     } finally {
       setLoading(false);
@@ -80,12 +110,19 @@ const PatientForm = () => {
         response = await patientService.createPatient(patientData);
       }
 
-      setPrediction(response.data.frailtyPrediction);
+      console.log('Save response:', response);
+      
+      // Handle response format
+      const savedData = response.data?.data || response.data;
+      if (savedData.frailtyPrediction) {
+        setPrediction(savedData.frailtyPrediction);
+      }
       
       setTimeout(() => {
         navigate('/patients');
       }, 3000);
     } catch (error) {
+      console.error('Error saving patient:', error);
       setError(error.response?.data?.message || 'Error saving patient data');
     } finally {
       setLoading(false);
@@ -100,7 +137,14 @@ const PatientForm = () => {
     <div className="patient-form-container">
       <div className="form-header">
         <h1>{isEditing ? 'Edit Patient' : 'Add New Patient'}</h1>
+        {isEditing && formData.patientId && (
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+            Editing: {formData.name} (ID: {formData.patientId})
+          </p>
+        )}
       </div>
+
+      {error && <div className="error-message">{error}</div>}
 
       {prediction && (
         <div className="prediction-result">
@@ -127,6 +171,9 @@ const PatientForm = () => {
                 required
                 placeholder="e.g., P-2025-001"
                 className="input-field"
+                readOnly={isEditing}
+                style={isEditing ? { backgroundColor: 'var(--bg-secondary)', cursor: 'not-allowed' } : {}}
+                title={isEditing ? "Patient ID cannot be changed" : ""}
               />
             </div>
             <div className="form-group">

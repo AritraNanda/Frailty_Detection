@@ -15,11 +15,16 @@ const PatientSearch = () => {
     setLoading(true);
     try {
       const response = await patientService.searchPatients(searchTerm);
-      setSearchResults(response.data);
+      console.log('Search response:', response);
+      
+      // Handle response format (backend returns {success, count, data})
+      const results = response.data?.data || response.data || [];
+      setSearchResults(Array.isArray(results) ? results : []);
       setHasSearched(true);
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
+      setHasSearched(true);
     } finally {
       setLoading(false);
     }
@@ -37,12 +42,25 @@ const PatientSearch = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by patient name..."
+            placeholder="Search by name, patient ID, email, or phone..."
             className="input-field search-input"
           />
-          <button type="submit" className="button search-button" disabled={loading}>
-            {loading ? 'Searching...' : 'Search'}
+          <button type="submit" className="button primary search-button" disabled={loading}>
+            {loading ? 'Searching...' : '🔍 Search'}
           </button>
+          {hasSearched && (
+            <button 
+              type="button" 
+              className="button secondary search-button" 
+              onClick={() => {
+                setSearchTerm('');
+                setSearchResults([]);
+                setHasSearched(false);
+              }}
+            >
+              Clear
+            </button>
+          )}
         </div>
       </form>
 
@@ -53,25 +71,36 @@ const PatientSearch = () => {
             <div className="patient-cards">
               {searchResults.map(patient => (
                 <div key={patient._id} className="patient-card">
-                  <div className="patient-info">
+                  <div className="patient-header">
                     <h5>{patient.name}</h5>
-                    <p>Age: {patient.age} | Gender: {patient.gender}</p>
                     {patient.frailtyPrediction && (
-                      <div className={getRiskLevelClass(patient.frailtyPrediction.riskLevel)}>
-                        Risk: {patient.frailtyPrediction.riskLevel}
-                      </div>
+                      <span className={`risk-badge ${patient.frailtyPrediction.riskLevel?.toLowerCase() || 'unknown'}`}>
+                        {patient.frailtyPrediction.riskLevel} Risk
+                      </span>
+                    )}
+                  </div>
+                  <div className="patient-info">
+                    <p><strong>Patient ID:</strong> {patient.patientId || 'N/A'}</p>
+                    <p><strong>Age:</strong> {patient.age} | <strong>Gender:</strong> {patient.gender}</p>
+                    <p><strong>Email:</strong> {patient.email || 'N/A'}</p>
+                    <p><strong>Phone:</strong> {patient.phone || 'N/A'}</p>
+                    {patient.frailtyPrediction && (
+                      <p><strong>Confidence:</strong> {(patient.frailtyPrediction.confidence * 100).toFixed(1)}%</p>
                     )}
                   </div>
                   <div className="patient-actions">
-                    <Link to={`/patients/${patient._id}`} className="button small">
+                    <Link to={`/patients/${patient._id}`} className="button small secondary">
                       View Details
+                    </Link>
+                    <Link to={`/patients/${patient._id}/edit`} className="button small primary">
+                      Edit
                     </Link>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p>No patients found matching your search.</p>
+            <p className="no-results">No patients found matching "{searchTerm}"</p>
           )}
         </div>
       )}

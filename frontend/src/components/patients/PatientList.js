@@ -7,8 +7,11 @@ import '../../styles/PatientList.css';
 
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
+  const [allPatients, setAllPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     fetchPatients();
@@ -33,14 +36,41 @@ const PatientList = () => {
       }
       
       setPatients(patientsData);
+      setAllPatients(patientsData); // Store all patients for filtering
     } catch (error) {
       setError('Error fetching patients');
       console.error('Full error:', error);
       console.error('Error response:', error.response);
       setPatients([]); // Ensure it's always an array
+      setAllPatients([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) {
+      setPatients(allPatients);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await patientService.searchPatients(searchTerm);
+      const results = response.data?.data || response.data || [];
+      setPatients(Array.isArray(results) ? results : []);
+    } catch (error) {
+      console.error('Search error:', error);
+      setError('Error searching patients');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setPatients(allPatients);
   };
 
   const handleDelete = async (patientId) => {
@@ -71,12 +101,49 @@ const PatientList = () => {
         </Link>
       </div>
 
+      <div className="search-section">
+        <form onSubmit={handleSearch} className="search-form">
+          <div className="search-input-group">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name, patient ID, email, or phone..."
+              className="input-field search-input"
+            />
+            <button type="submit" className="button primary search-button" disabled={isSearching}>
+              {isSearching ? 'Searching...' : '🔍 Search'}
+            </button>
+            {searchTerm && (
+              <button 
+                type="button" 
+                className="button secondary search-button" 
+                onClick={handleClearSearch}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
       {patients.length === 0 ? (
         <div className="no-patients">
-          <p>No patients found.</p>
-          <Link to="/patients/new" className="button primary">
-            Add Your First Patient
-          </Link>
+          {searchTerm ? (
+            <>
+              <p>No patients found matching "{searchTerm}"</p>
+              <button className="button secondary" onClick={handleClearSearch}>
+                Clear Search
+              </button>
+            </>
+          ) : (
+            <>
+              <p>No patients found.</p>
+              <Link to="/patients/new" className="button primary">
+                Add Your First Patient
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <div className="patients-grid">

@@ -17,10 +17,16 @@ const PatientDetails = () => {
   const fetchPatient = async () => {
     try {
       const response = await patientService.getPatient(id);
-      setPatient(response.data);
+      console.log('Patient details response:', response);
+      
+      // Handle response format (backend returns {success, data})
+      const patientData = response.data?.data || response.data;
+      console.log('Patient data:', patientData);
+      setPatient(patientData);
     } catch (error) {
       setError('Error fetching patient details');
       console.error('Error:', error);
+      console.error('Error response:', error.response);
     } finally {
       setLoading(false);
     }
@@ -42,6 +48,32 @@ const PatientDetails = () => {
     return riskLevel.toLowerCase();
   };
 
+  const formatLivingStatus = (status) => {
+    if (!status) return 'Not provided';
+    const statusMap = {
+      'alone': 'Lives Alone',
+      'with-family': 'Lives with Family',
+      'with-others': 'Lives with Others',
+      'care-facility': 'Care Facility'
+    };
+    return statusMap[status] || status;
+  };
+
+  const formatYesNo = (value) => {
+    if (!value) return 'Not provided';
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  };
+
+  const formatCardiacFunction = (value) => {
+    if (!value) return 'Not provided';
+    const functionMap = {
+      'I': 'Class I (No limitation)',
+      'II': 'Class II (Slight limitation)',
+      'III-IV': 'Class III-IV (Marked limitation)'
+    };
+    return functionMap[value] || value;
+  };
+
   if (loading) return <div className="loading">Loading patient details...</div>;
   if (error) return <div className="error-message">{error}</div>;
   if (!patient) return <div className="error-message">Patient not found</div>;
@@ -51,10 +83,26 @@ const PatientDetails = () => {
       <div className="page-header">
         <div>
           <h1>{patient.name}</h1>
-          {patient.frailtyPrediction && (
+          {patient.frailtyPrediction && patient.frailtyPrediction.riskLevel && (
             <div className={`prediction-banner ${getRiskLevelClass(patient.frailtyPrediction.riskLevel)}`}>
-              <h3>Frailty Risk Assessment: {patient.frailtyPrediction.riskLevel}</h3>
-              <p>Confidence: {(patient.frailtyPrediction.confidence * 100).toFixed(1)}%</p>
+              <div className="prediction-content">
+                <h3>Frailty Risk Assessment: {patient.frailtyPrediction.riskLevel}</h3>
+                <p>Confidence: {(patient.frailtyPrediction.confidence * 100).toFixed(1)}%</p>
+                {patient.frailtyPrediction.predictedAt && (
+                  <p className="prediction-date">
+                    Assessed on: {new Date(patient.frailtyPrediction.predictedAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                )}
+                {patient.frailtyPrediction.modelVersion && (
+                  <p className="model-version">Model: {patient.frailtyPrediction.modelVersion}</p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -94,7 +142,15 @@ const PatientDetails = () => {
             </div>
             <div className="info-item">
               <label>Gender:</label>
-              <span>{patient.gender}</span>
+              <span>{patient.gender ? patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1) : 'Not provided'}</span>
+            </div>
+            <div className="info-item">
+              <label>Date Added:</label>
+              <span>{new Date(patient.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</span>
             </div>
           </div>
         </div>
@@ -104,23 +160,23 @@ const PatientDetails = () => {
           <div className="info-grid">
             <div className="info-item">
               <label>Living Status:</label>
-              <span>{patient.livingStatus || 'Not provided'}</span>
+              <span>{formatLivingStatus(patient.livingStatus)}</span>
             </div>
             <div className="info-item">
               <label>Depression:</label>
-              <span>{patient.depression || 'Not provided'}</span>
+              <span>{formatYesNo(patient.depression)}</span>
             </div>
             <div className="info-item">
               <label>Cardiac Function:</label>
-              <span>{patient.cardiacFunction || 'Not provided'}</span>
+              <span>{formatCardiacFunction(patient.cardiacFunction)}</span>
             </div>
             <div className="info-item">
               <label>Cerebrovascular Disease:</label>
-              <span>{patient.cerebrovascularDisease || 'Not provided'}</span>
+              <span>{formatYesNo(patient.cerebrovascularDisease)}</span>
             </div>
             <div className="info-item">
               <label>Diabetes:</label>
-              <span>{patient.diabetes || 'Not provided'}</span>
+              <span>{formatYesNo(patient.diabetes)}</span>
             </div>
           </div>
         </div>
@@ -151,10 +207,24 @@ const PatientDetails = () => {
           <div className="details-section">
             <h3>Additional Notes</h3>
             <div className="info-item">
-              <p>{patient.notes}</p>
+              <p style={{ whiteSpace: 'pre-wrap' }}>{patient.notes}</p>
             </div>
           </div>
         )}
+
+        <div className="details-section" style={{ background: 'var(--bg-secondary)', border: 'none' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', textAlign: 'center' }}>
+            {patient.updatedAt && patient.updatedAt !== patient.createdAt && (
+              <p>Last updated: {new Date(patient.updatedAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="back-navigation">
