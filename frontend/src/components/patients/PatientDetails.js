@@ -80,158 +80,234 @@ const PatientDetails = () => {
 
   return (
     <div className="patient-details-container">
-      <div className="page-header">
-        <div>
-          <h1>{patient.name}</h1>
-          {patient.frailtyPrediction && patient.frailtyPrediction.riskLevel && (
-            <div className={`prediction-banner ${getRiskLevelClass(patient.frailtyPrediction.riskLevel)}`}>
-              <div className="prediction-content">
-                <h3>Frailty Risk Assessment: {patient.frailtyPrediction.riskLevel}</h3>
-                <p>Confidence: {(patient.frailtyPrediction.confidence * 100).toFixed(1)}%</p>
-                {patient.frailtyPrediction.predictedAt && (
-                  <p className="prediction-date">
-                    Assessed on: {new Date(patient.frailtyPrediction.predictedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
-                )}
-                {patient.frailtyPrediction.modelVersion && (
-                  <p className="model-version">Model: {patient.frailtyPrediction.modelVersion}</p>
-                )}
-              </div>
+      <div className="back-navigation-top">
+        <Link to="/patients" className="back-link">
+          ← Back to Patients
+        </Link>
+      </div>
+
+      <div className="patient-header-card">
+        <div className="patient-header-content">
+          <div className="patient-avatar">
+            <div className="avatar-circle">
+              {patient.name.charAt(0).toUpperCase()}
             </div>
-          )}
+          </div>
+          <div className="patient-header-info">
+            <h1 className="patient-name">{patient.name}</h1>
+            <div className="patient-meta">
+              <span className="meta-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                ID: {patient.patientId}
+              </span>
+              <span className="meta-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                {patient.age} years • {patient.gender ? patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1) : 'Not specified'}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="header-actions">
-          <Link to={`/patients/${id}/edit`} className="button primary">
-            Edit Patient
+          <Link to={`/patients/${id}/edit`} className="action-btn edit-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+              <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+            </svg>
+            Edit
           </Link>
-          <button onClick={handleDelete} className="button danger">
-            Delete Patient
+          <button onClick={handleDelete} className="action-btn delete-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+              <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+            </svg>
+            Delete
           </button>
         </div>
       </div>
 
-      <div className="patient-details-grid">
-        <div className="details-section">
-          <h3>Basic Information</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>Patient ID:</label>
-              <span>{patient.patientId || 'Not provided'}</span>
+      {patient.frailtyPrediction && patient.frailtyPrediction.riskLevel && (
+        <div className={`frailty-risk-card ${getRiskLevelClass(patient.frailtyPrediction.riskLevel)}`}>
+          <div className="risk-card-header">
+            <div className="risk-icon">
+              {patient.frailtyPrediction.riskLevel.toLowerCase() === 'low' && (
+                <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+              )}
+              {patient.frailtyPrediction.riskLevel.toLowerCase() === 'medium' && (
+                <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+              )}
+              {patient.frailtyPrediction.riskLevel.toLowerCase() === 'high' && (
+                <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                </svg>
+              )}
             </div>
-            <div className="info-item">
-              <label>Name:</label>
-              <span>{patient.name}</span>
+            <div>
+              <h3>Frailty Risk Assessment</h3>
+              <div className="risk-level">{patient.frailtyPrediction.riskLevel} Risk</div>
             </div>
-            <div className="info-item">
-              <label>Email:</label>
-              <span>{patient.email || 'Not provided'}</span>
+          </div>
+          <div className="risk-card-body">
+            <div className="risk-stat">
+              <div className="stat-label">Confidence Level</div>
+              <div className="stat-value">{(patient.frailtyPrediction.confidence * 100).toFixed(1)}%</div>
             </div>
-            <div className="info-item">
-              <label>Phone:</label>
-              <span>{patient.phone || 'Not provided'}</span>
+            {patient.frailtyPrediction.predictedAt && (
+              <div className="risk-stat">
+                <div className="stat-label">Assessment Date</div>
+                <div className="stat-value">
+                  {new Date(patient.frailtyPrediction.predictedAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </div>
+              </div>
+            )}
+            {patient.frailtyPrediction.modelVersion && (
+              <div className="risk-stat">
+                <div className="stat-label">Model Version</div>
+                <div className="stat-value">{patient.frailtyPrediction.modelVersion}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="details-grid">
+        <div className="detail-card">
+          <div className="card-header">
+            <svg className="card-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+              <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg>
+            <h3>Contact Information</h3>
+          </div>
+          <div className="card-body">
+            <div className="detail-row">
+              <span className="detail-label">Email</span>
+              <span className="detail-value">{patient.email || 'Not provided'}</span>
             </div>
-            <div className="info-item">
-              <label>Age:</label>
-              <span>{patient.age} years</span>
+            <div className="detail-row">
+              <span className="detail-label">Phone</span>
+              <span className="detail-value">{patient.phone || 'Not provided'}</span>
             </div>
-            <div className="info-item">
-              <label>Gender:</label>
-              <span>{patient.gender ? patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1) : 'Not provided'}</span>
-            </div>
-            <div className="info-item">
-              <label>Date Added:</label>
-              <span>{new Date(patient.createdAt).toLocaleDateString('en-US', { 
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</span>
+            <div className="detail-row">
+              <span className="detail-label">Date Added</span>
+              <span className="detail-value">
+                {new Date(patient.createdAt).toLocaleDateString('en-US', { 
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="details-section">
-          <h3>Frailty Assessment Data</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>Living Status:</label>
-              <span>{formatLivingStatus(patient.livingStatus)}</span>
+        <div className="detail-card">
+          <div className="card-header">
+            <svg className="card-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+              <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13z"/>
+            </svg>
+            <h3>Health Assessment</h3>
+          </div>
+          <div className="card-body">
+            <div className="detail-row">
+              <span className="detail-label">Living Status</span>
+              <span className="detail-value">{formatLivingStatus(patient.livingStatus)}</span>
             </div>
-            <div className="info-item">
-              <label>Depression:</label>
-              <span>{formatYesNo(patient.depression)}</span>
+            <div className="detail-row">
+              <span className="detail-label">Depression</span>
+              <span className="detail-value">{formatYesNo(patient.depression)}</span>
             </div>
-            <div className="info-item">
-              <label>Cardiac Function:</label>
-              <span>{formatCardiacFunction(patient.cardiacFunction)}</span>
+            <div className="detail-row">
+              <span className="detail-label">Cardiac Function</span>
+              <span className="detail-value">{formatCardiacFunction(patient.cardiacFunction)}</span>
             </div>
-            <div className="info-item">
-              <label>Cerebrovascular Disease:</label>
-              <span>{formatYesNo(patient.cerebrovascularDisease)}</span>
+            <div className="detail-row">
+              <span className="detail-label">Cerebrovascular Disease</span>
+              <span className="detail-value">{formatYesNo(patient.cerebrovascularDisease)}</span>
             </div>
-            <div className="info-item">
-              <label>Diabetes:</label>
-              <span>{formatYesNo(patient.diabetes)}</span>
+            <div className="detail-row">
+              <span className="detail-label">Diabetes</span>
+              <span className="detail-value">{formatYesNo(patient.diabetes)}</span>
             </div>
           </div>
         </div>
 
-        <div className="details-section">
-          <h3>Laboratory Results</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>Total Cholesterol:</label>
-              <span>{patient.totalCholesterol ? `${patient.totalCholesterol} mmol/L` : 'Not provided'}</span>
+        <div className="detail-card">
+          <div className="card-header">
+            <svg className="card-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0z"/>
+            </svg>
+            <h3>Laboratory Results</h3>
+          </div>
+          <div className="card-body">
+            <div className="detail-row">
+              <span className="detail-label">Total Cholesterol</span>
+              <span className="detail-value">
+                {patient.totalCholesterol ? `${patient.totalCholesterol} mmol/L` : 'Not provided'}
+              </span>
             </div>
-            <div className="info-item">
-              <label>LDL Cholesterol:</label>
-              <span>{patient.ldlCholesterol ? `${patient.ldlCholesterol} mmol/L` : 'Not provided'}</span>
+            <div className="detail-row">
+              <span className="detail-label">LDL Cholesterol</span>
+              <span className="detail-value">
+                {patient.ldlCholesterol ? `${patient.ldlCholesterol} mmol/L` : 'Not provided'}
+              </span>
             </div>
-            <div className="info-item">
-              <label>Hemoglobin:</label>
-              <span>{patient.hemoglobin ? `${patient.hemoglobin} g/dL` : 'Not provided'}</span>
+            <div className="detail-row">
+              <span className="detail-label">Hemoglobin</span>
+              <span className="detail-value">
+                {patient.hemoglobin ? `${patient.hemoglobin} g/dL` : 'Not provided'}
+              </span>
             </div>
-            <div className="info-item">
-              <label>ADL Score:</label>
-              <span>{patient.adlScore !== undefined ? `${patient.adlScore}/100` : 'Not provided'}</span>
+            <div className="detail-row">
+              <span className="detail-label">ADL Score</span>
+              <span className="detail-value">
+                {patient.adlScore !== undefined ? `${patient.adlScore}/100` : 'Not provided'}
+              </span>
             </div>
           </div>
         </div>
 
         {patient.notes && (
-          <div className="details-section">
-            <h3>Additional Notes</h3>
-            <div className="info-item">
-              <p style={{ whiteSpace: 'pre-wrap' }}>{patient.notes}</p>
+          <div className="detail-card notes-card">
+            <div className="card-header">
+              <svg className="card-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2z"/>
+                <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0z"/>
+              </svg>
+              <h3>Additional Notes</h3>
+            </div>
+            <div className="card-body">
+              <p className="notes-text">{patient.notes}</p>
             </div>
           </div>
         )}
+      </div>
 
-        <div className="details-section" style={{ background: 'var(--bg-secondary)', border: 'none' }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', textAlign: 'center' }}>
-            {patient.updatedAt && patient.updatedAt !== patient.createdAt && (
-              <p>Last updated: {new Date(patient.updatedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}</p>
-            )}
-          </div>
+      {patient.updatedAt && patient.updatedAt !== patient.createdAt && (
+        <div className="update-timestamp">
+          Last updated: {new Date(patient.updatedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
         </div>
-      </div>
-
-      <div className="back-navigation">
-        <Link to="/patients" className="button secondary">
-          ← Back to Patients
-        </Link>
-      </div>
+      )}
     </div>
   );
 };
