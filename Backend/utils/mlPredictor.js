@@ -258,3 +258,4 @@ function fallbackPrediction(patientData) {
 exports.predictWithExternalAPI = async (patientData) => {
   throw new Error('External ML API not configured');
 };
+// End of mlPredictor.js
