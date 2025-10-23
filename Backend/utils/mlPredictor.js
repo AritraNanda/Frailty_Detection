@@ -33,9 +33,12 @@ exports.predictFrailty = async (patientData) => {
     const hasModel = checkModelFiles();
     
     if (!hasModel) {
-      console.warn('ML model files not found, using fallback prediction');
+      console.warn('⚠️  ML model files not found, using fallback prediction');
+      console.warn('Expected model files in:', path.join(__dirname, '..', 'ml_models'));
       return fallbackPrediction(patientData);
     }
+    
+    console.log('✅ ML model files found, attempting Python prediction...');
     
     // Prepare patient data for Python script
     const pythonInput = {
@@ -51,10 +54,13 @@ exports.predictFrailty = async (patientData) => {
       adlScore: patientData.adlScore
     };
     
+    console.log('📊 Patient data for prediction:', pythonInput);
+    
     // Call Python prediction script
     const prediction = await callPythonPredictor(pythonInput);
     
     if (prediction.success) {
+      console.log('✅ Python prediction successful:', prediction.prediction.riskLevel);
       return {
         riskLevel: prediction.prediction.riskLevel,
         confidence: prediction.prediction.confidence,
@@ -64,12 +70,14 @@ exports.predictFrailty = async (patientData) => {
         modelMetrics: prediction.model.metrics
       };
     } else {
-      console.error('Python prediction failed:', prediction.error);
+      console.error('❌ Python prediction failed:', prediction.error);
+      console.warn('⚠️  Falling back to rule-based prediction');
       return fallbackPrediction(patientData);
     }
     
   } catch (error) {
-    console.error('Prediction error:', error);
+    console.error('❌ Prediction error:', error);
+    console.warn('⚠️  Falling back to rule-based prediction');
     return fallbackPrediction(patientData);
   }
 };
@@ -83,9 +91,12 @@ function callPythonPredictor(patientData) {
     
     // Check if Python script exists
     if (!fs.existsSync(scriptPath)) {
+      console.error('❌ Python script not found at:', scriptPath);
       reject(new Error('Python prediction script not found'));
       return;
     }
+    
+    console.log('🐍 Starting Python process with script:', scriptPath);
     
     // Spawn Python process
     const python = spawn('python3', [scriptPath]);
@@ -104,19 +115,25 @@ function callPythonPredictor(patientData) {
     
     python.stderr.on('data', (data) => {
       errorOutput += data.toString();
+      console.error('🐍 Python stderr:', data.toString());
     });
     
     // Handle completion
     python.on('close', (code) => {
+      console.log(`🐍 Python process exited with code ${code}`);
+      
       if (code !== 0) {
+        console.error('❌ Python error output:', errorOutput);
         reject(new Error(`Python script exited with code ${code}: ${errorOutput}`));
         return;
       }
       
       try {
+        console.log('🐍 Python output:', output);
         const result = JSON.parse(output);
         resolve(result);
       } catch (error) {
+        console.error('❌ Failed to parse Python output:', output);
         reject(new Error(`Failed to parse Python output: ${error.message}`));
       }
     });
@@ -138,147 +155,106 @@ function callPythonPredictor(patientData) {
  * Fallback prediction using rule-based system
  */
 function fallbackPrediction(patientData) {
-  console.log('Using fallback rule-based prediction');
+  console.log('⚠️  Using fallback rule-based prediction');
+  console.log('📊 Patient data for fallback:', {
+    age: patientData.age,
+    livingStatus: patientData.livingStatus,
+    depression: patientData.depression,
+    cardiacFunction: patientData.cardiacFunction,
+    diabetes: patientData.diabetes
+  });
   
-  const features = extractFeatures(patientData);
-  const riskScore = calculateRiskScore(features);
+  // Calculate risk score based on actual ML features
+  let riskScore = 0;
+  let maxScore = 0;
+  
+  // Age factor (weight: 3)
+  maxScore += 3;
+  if (patientData.age > 80) {
+    riskScore += 3;
+  } else if (patientData.age > 70) {
+    riskScore += 2;
+  } else if (patientData.age > 60) {
+    riskScore += 1;
+  }
+  
+  // Living alone (weight: 2)
+  maxScore += 2;
+  if (patientData.livingStatus === 'alone') {
+    riskScore += 2;
+  }
+  
+  // Depression (weight: 3)
+  maxScore += 3;
+  if (patientData.depression === 'yes') {
+    riskScore += 3;
+  }
+  
+  // Cardiac function (weight: 3)
+  maxScore += 3;
+  if (patientData.cardiacFunction === 'III-IV' || patientData.cardiacFunction === 'IV') {
+    riskScore += 3;
+  } else if (patientData.cardiacFunction === 'II-III' || patientData.cardiacFunction === 'III') {
+    riskScore += 2;
+  }
+  
+  // Cerebrovascular disease (weight: 2)
+  maxScore += 2;
+  if (patientData.cerebrovascularDisease === 'yes') {
+    riskScore += 2;
+  }
+  
+  // Diabetes (weight: 2)
+  maxScore += 2;
+  if (patientData.diabetes === 'yes') {
+    riskScore += 2;
+  }
+  
+  // Hemoglobin (weight: 2)
+  maxScore += 2;
+  if (patientData.hemoglobin < 12) {
+    riskScore += 2;
+  } else if (patientData.hemoglobin < 13) {
+    riskScore += 1;
+  }
+  
+  // ADL Score (weight: 3)
+  maxScore += 3;
+  if (patientData.adlScore < 60) {
+    riskScore += 3;
+  } else if (patientData.adlScore < 80) {
+    riskScore += 2;
+  } else if (patientData.adlScore < 90) {
+    riskScore += 1;
+  }
+  
+  // Normalize score to 0-1
+  const normalizedScore = maxScore > 0 ? riskScore / maxScore : 0.5;
   
   let riskLevel;
-  if (riskScore < 0.33) {
+  if (normalizedScore < 0.33) {
     riskLevel = 'Low';
-  } else if (riskScore < 0.67) {
+  } else if (normalizedScore < 0.67) {
     riskLevel = 'Medium';
   } else {
     riskLevel = 'High';
   }
   
+  console.log(`📊 Fallback calculation: ${riskScore}/${maxScore} = ${normalizedScore.toFixed(2)} → ${riskLevel}`);
+  
   return {
     riskLevel,
-    confidence: Math.min(0.95, riskScore + 0.1),
-    frailtyProbability: riskScore,
+    confidence: Math.min(0.85, normalizedScore + 0.15),
+    frailtyProbability: normalizedScore,
     modelVersion: '1.0.0-fallback',
-    modelName: 'Rule-based System',
+    modelName: 'Rule-based System (Fallback)',
     isFallback: true
   };
-}
-
-// Extract relevant features from patient data
-function extractFeatures(patient) {
-  return {
-    age: patient.age || 0,
-    bmi: calculateBMI(patient.height, patient.weight),
-    cognitiveStatus: patient.cognitiveStatus || 'normal',
-    mobilityStatus: patient.mobilityStatus || 'independent',
-    smokingStatus: patient.smokingStatus || 'never',
-    alcoholConsumption: patient.alcoholConsumption || 'never',
-    exerciseFrequency: patient.exerciseFrequency || 'regularly',
-    hasChronicConditions: Boolean(patient.medicalHistory),
-    medicationCount: countMedications(patient.currentMedications)
-  };
-}
-
-// Calculate BMI
-function calculateBMI(height, weight) {
-  if (!height || !weight) return 0;
-  const heightInMeters = height / 100;
-  return weight / (heightInMeters * heightInMeters);
-}
-
-// Count number of medications
-function countMedications(medications) {
-  if (!medications) return 0;
-  return medications.split(',').length;
-}
-
-// Calculate risk score (0-1)
-function calculateRiskScore(features) {
-  let score = 0;
-  let maxScore = 0;
-
-  // Age factor (weight: 3)
-  maxScore += 3;
-  if (features.age > 80) {
-    score += 3;
-  } else if (features.age > 70) {
-    score += 2;
-  } else if (features.age > 60) {
-    score += 1;
-  }
-
-  // BMI factor (weight: 2)
-  maxScore += 2;
-  if (features.bmi < 18.5 || features.bmi > 30) {
-    score += 2;
-  } else if (features.bmi < 20 || features.bmi > 28) {
-    score += 1;
-  }
-
-  // Cognitive status (weight: 3)
-  maxScore += 3;
-  const cognitiveScores = {
-    'severe-impairment': 3,
-    'moderate-impairment': 2,
-    'mild-impairment': 1,
-    'normal': 0
-  };
-  score += cognitiveScores[features.cognitiveStatus] || 0;
-
-  // Mobility status (weight: 3)
-  maxScore += 3;
-  const mobilityScores = {
-    'wheelchair': 3,
-    'mobility-aid': 2,
-    'assistance-needed': 1,
-    'independent': 0
-  };
-  score += mobilityScores[features.mobilityStatus] || 0;
-
-  // Smoking status (weight: 1)
-  maxScore += 1;
-  if (features.smokingStatus === 'current') {
-    score += 1;
-  } else if (features.smokingStatus === 'former') {
-    score += 0.5;
-  }
-
-  // Exercise frequency (weight: 2)
-  maxScore += 2;
-  const exerciseScores = {
-    'never': 2,
-    'rarely': 1.5,
-    'sometimes': 1,
-    'regularly': 0
-  };
-  score += exerciseScores[features.exerciseFrequency] || 0;
-
-  // Chronic conditions (weight: 2)
-  maxScore += 2;
-  if (features.hasChronicConditions) {
-    score += 2;
-  }
-
-  // Medication count (weight: 1)
-  maxScore += 1;
-  if (features.medicationCount > 5) {
-    score += 1;
-  } else if (features.medicationCount > 3) {
-    score += 0.5;
-  }
-
-  // Normalize score to 0-1
-  return maxScore > 0 ? score / maxScore : 0.5;
 }
 
 /**
  * Integration with external ML API (for future use)
  */
 exports.predictWithExternalAPI = async (patientData) => {
-  // Example integration with external ML API
-  // const axios = require('axios');
-  // const response = await axios.post(process.env.ML_API_URL, {
-  //   features: extractFeatures(patientData)
-  // });
-  // return response.data;
-  
   throw new Error('External ML API not configured');
 };
