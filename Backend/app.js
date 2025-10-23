@@ -33,22 +33,20 @@ app.use(morgan('dev')); // HTTP request logger
 const connectDB = require('./config/database');
 connectDB();
 
-// Routes
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Frailty Detection API',
-    version: '1.0.0',
-    endpoints: {
-      auth: '/api/auth',
-      patients: '/api/patients',
-      doctors: '/api/doctors'
-    }
-  });
-});
-
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/doctors', doctorRoutes);
+
+// Health check route for API
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK',
+    message: 'Frailty Detection API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Serve static files from React build (production only)
 if (process.env.NODE_ENV === 'production') {
@@ -59,9 +57,22 @@ if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
   });
+} else {
+  // Development mode - show API info at root
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: 'Frailty Detection API - Development Mode',
+      version: '1.0.0',
+      endpoints: {
+        auth: '/api/auth',
+        patients: '/api/patients',
+        doctors: '/api/doctors'
+      }
+    });
+  });
 }
 
-// Error handling middleware
+// Error handling middleware (only applied if no route matched)
 app.use(notFound);
 app.use(errorHandler);
 
