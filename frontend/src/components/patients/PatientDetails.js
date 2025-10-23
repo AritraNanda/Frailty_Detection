@@ -10,10 +10,6 @@ const PatientDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchPatient();
-  }, [id]);
-
   const fetchPatient = async () => {
     try {
       const response = await patientService.getPatient(id);
@@ -31,6 +27,11 @@ const PatientDetails = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPatient();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this patient?')) {

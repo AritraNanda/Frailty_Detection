@@ -30,10 +30,6 @@ const PatientSearch = () => {
     }
   };
 
-  const getRiskLevelClass = (riskLevel) => {
-    return `risk-level ${riskLevel?.toLowerCase() || 'unknown'}`;
-  };
-
   return (
     <div className="patient-search">
       <form onSubmit={handleSearch} className="search-form">

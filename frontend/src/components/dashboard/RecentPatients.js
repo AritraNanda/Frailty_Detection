@@ -6,10 +6,6 @@ const RecentPatients = ({ doctorId }) => {
   const [recentPatients, setRecentPatients] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchRecentPatients();
-  }, [doctorId]);
-
   const fetchRecentPatients = async () => {
     try {
       const response = await patientService.getRecentPatients(doctorId);
@@ -25,6 +21,11 @@ const RecentPatients = ({ doctorId }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchRecentPatients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctorId]);
 
   if (loading) {
     return <div className="loading">Loading recent patients...</div>;

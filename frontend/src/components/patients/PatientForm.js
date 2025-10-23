@@ -36,12 +36,6 @@ const PatientForm = () => {
   const [error, setError] = useState('');
   const [prediction, setPrediction] = useState(null);
 
-  useEffect(() => {
-    if (isEditing) {
-      fetchPatient();
-    }
-  }, [id, isEditing]);
-
   const fetchPatient = async () => {
     try {
       setLoading(true);
@@ -83,6 +77,13 @@ const PatientForm = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isEditing) {
+      fetchPatient();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isEditing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
