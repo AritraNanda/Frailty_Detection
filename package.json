@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd Backend && npm run dev",
     "client": "cd frontend && npm start",
-    "start": "npm run dev",
+    "start": "cd Backend && npm start",
     "build": "npm install && cd Backend && npm install && cd ../frontend && npm install && npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
